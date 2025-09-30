@@ -39,7 +39,7 @@ def parse_auth_line(line):
   def brute_force(per_ip_timestamps, max_minutes=10, threshold = 5):
   from datetime import timedelta
 
-    incidents = []
+    sus_incidents = []
     window = timedelta(minutes=10)
     for ip, times in per_ip_timestamps.items():
         times.sort()
@@ -50,7 +50,7 @@ def parse_auth_line(line):
             while j + 1 < n and (times[j+1] - times[i]) <= window:
                 j += 1
             count = j - i + 1
-            if count >= 5:
+            if count >= threshold:
                 incidents.append({
                     "ip": ip,
                     "count": count,
@@ -61,6 +61,7 @@ def parse_auth_line(line):
                 i = j + 1
             else:
                 i += 1
+     return sus_incidents
 
 if __name__ == "__main__":
     per_ip_timestamps = defaultdict(list)
