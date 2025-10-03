@@ -36,23 +36,23 @@ def parse_auth_line(line):
             ip = None
     return ts, ip, event_type
   
-  def brute_force(per_ip_timestamps, max_minutes=10, threshold = 5):
+def brute_force(per_ip_timestamps, max_minutes=10, threshold = 5):
   from datetime import timedelta
 
-    sus_incidents = []
-    window = timedelta(minutes=10)
-    for ip, times in per_ip_timestamps.items():
-        times.sort()
-        n = len(times)
-        i = 0
-        while i < n:
-            j = i
-            # Expand window while the time difference is <=10 minutes
-            while j + 1 < n and (times[j+1] - times[i]) <= window:
-                j += 1
+  sus_incidents = []
+  window = timedelta(minutes=10)
+  for ip, times in per_ip_timestamps.items():
+      times.sort()
+      n = len(times)
+      i = 0
+      while i < n:
+        j = i
+        # Expand window while the time difference is <=10 minutes
+        while j + 1 < n and (times[j+1] - times[i]) <= window:
+            j += 1
             count = j - i + 1
             if count >= threshold:
-                incidents.append({
+                sus_incidents.append({
                     "ip": ip,
                     "count": count,
                     "first": times[i].isoformat(),
@@ -62,9 +62,7 @@ def parse_auth_line(line):
                 i = j + 1
             else:
                 i += 1
-     print(f"Detected {len(incidents)} brute-force incidents")
-     for incident in incidents[:5]:
-         print(incident)
+        return sus_incidents
 
 if __name__ == "__main__":
     per_ip_timestamps = defaultdict(list)
@@ -73,6 +71,19 @@ if __name__ == "__main__":
             ts, ip, event = parse_auth_line(line)
             if ts and ip and event == "failed":   # checks that ts and ip are not null, and that event=="failed"
                 per_ip_timestamps[ip].append(ts)
-    # quick print
+    # quick print for failed attempts per IP
     for ip, times in per_ip_timestamps.items():
-        print(ip, len(times))
+        print(f"{ip}: {len(times)} failed attempts")
+
+    #Run brute force detection
+    sus_incidents = brute_force(per_ip_timestamps)
+    
+    print(f"\nDetected {len(sus_incidents)} brute-force incidents")
+    for incident in sus_incidents[:5]:
+        print(incident)
+    
+        #if more than 5 incidents 
+        if sus_incidents:
+            print(sus_incidents[0])
+            if len(sus_incidents) > 1:
+                print("...")

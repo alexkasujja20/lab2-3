@@ -43,13 +43,16 @@ if __name__ == "__main__":
             ts, ip, event = parse_auth_line(line)
             if ts and ip and event == "failed":   # checks that ts and ip are not null, and that event=="failed"
                 per_ip_timestamps[ip].append(ts)
+    
     # quick print
+    print("{")
     for ip, times in per_ip_timestamps.items():
-        times =[]
-        print(ip, len(times))
-        print(f"{" "\n", ip,": [")
-        print(times[0])
-        print(times[1])
-        print(times[2])
-        print("...", "\n", "],")
-        print("...", "\n", "},")
+       
+        print(f'  "{ip}": [  ')
+        for i in times:
+            print(i)
+        print("      ...")
+        print("  ],", end="")
+        print("\n") 
+    print("\n}")    
+        
