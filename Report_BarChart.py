@@ -16,7 +16,9 @@ top_attackers = sorted(summary.items(), key=lambda x: x[1], reverse=True)
 print("Top attackers IPs:")
 for ip, count in top_attackers[:10]:
     print(f"{ip}: {count} failed attempts")
-
+    
+# A bar chart of top 10 attacker Ips 
+print("A bar chart of top 10 attacker Ips)
 ips = [ip for ip, count in top_attackers[:10]]
 counts = [count for ip, count in top_attackers[:10]]
 
