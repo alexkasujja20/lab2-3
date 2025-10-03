@@ -47,6 +47,7 @@ def parse_auth_line(line):
         i = 0
         while i < n:
             j = i
+            # Expand window while the time difference is <=10 minutes
             while j + 1 < n and (times[j+1] - times[i]) <= window:
                 j += 1
             count = j - i + 1
@@ -61,7 +62,9 @@ def parse_auth_line(line):
                 i = j + 1
             else:
                 i += 1
-     return sus_incidents
+     print(f"Detected {len(incidents)} brute-force incidents")
+     for incident in incidents[:5]:
+         print(incident)
 
 if __name__ == "__main__":
     per_ip_timestamps = defaultdict(list)
