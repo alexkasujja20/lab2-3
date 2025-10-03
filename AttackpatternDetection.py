@@ -52,4 +52,4 @@ if __name__ == "__main__":
         print(times[1])
         print(times[2])
         print("...", "\n", "],")
-        print(
+        print("...", "\n", "},")
